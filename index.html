@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venezuela Economic Potential Dashboard</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Leaflet.js for interactive maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Custom map container size */
+        #map { height: 400px; width: 100%; z-index: 1; }
+        
+        /* Smooth transitions for language changes */
+        .fade-text { transition: opacity 0.3s ease-in-out; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+    <!-- Navbar -->
+    <nav class="bg-indigo-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-chart-line text-2xl text-emerald-400"></i>
+                    <span class="font-bold text-xl tracking-tight" data-i18n="nav_title">Venezuela EcoDash</span>
+                </div>
+                <div>
+                    <!-- Language Toggle -->
+                    <button id="langToggle" class="bg-indigo-700 hover:bg-indigo-600 px-4 py-2 rounded-md font-semibold transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-globe"></i>
+                        <span id="currentLangLabel">EN / ES</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 1) Hero Section -->
+    <header class="bg-gradient-to-r from-indigo-800 to-blue-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 fade-text" data-i18n="hero_title">
+                Venezuela Economic Potential & Investment Scenarios
+            </h1>
+            <p class="text-xl md:text-2xl text-indigo-200 mb-8 fade-text" data-i18n="hero_subtitle">
+                Exploring natural resources, historical trends, and future opportunities.
+            </p>
+            <p class="max-w-3xl mx-auto text-lg text-slate-300 fade-text" data-i18n="hero_desc">
+                This dashboard explores Venezuela’s vast natural resources, historical production data, international comparisons, and potential economic recovery scenarios through strategic investment.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- 2) Natural Resources Section -->
+        <section id="resources">
+            <div class="mb-8 border-b pb-4">
+                <h2 class="text-3xl font-bold text-indigo-900 flex items-center gap-3 fade-text" data-i18n="res_title">
+                    <i class="fa-solid fa-gem text-emerald-600"></i> Natural Resources
+                </h2>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <canvas id="resourcesChart"></canvas>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md space-y-4">
+                    <h3 class="text-xl font-semibold text-slate-800 fade-text" data-i18n="res_subtitle">Estimated Reserves</h3>
+                    <p class="text-slate-600 leading-relaxed fade-text" data-i18n="res_desc">
+                        Venezuela has the world's largest proven oil reserves (~303 billion barrels). Currently, production is much lower due to lack of investment and infrastructure. It also possesses immense reserves of Gold, Gas, and Iron.
+                    </p>
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm">
+                        <span class="font-bold text-slate-700 fade-text" data-i18n="sources_label">Sources:</span>
+                        <ul class="list-disc pl-5 mt-2 space-y-1 text-indigo-600">
+                            <li><a href="https://www.eia.gov/" target="_blank" class="hover:underline">U.S. Energy Information Administration (EIA)</a></li>
+                            <li><a href="https://www.usgs.gov/" target="_blank" class="hover:underline">U.S. Geological Survey (USGS)</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3) Historical Production Section -->
+        <section id="historical">
+            <div class="mb-8 border-b pb-4">
+                <h2 class="text-3xl font-bold text-indigo-900 flex items-center gap-3 fade-text" data-i18n="hist_title">
+                    <i class="fa-solid fa-clock-rotate-left text-blue-600"></i> Historical Production & GDP
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+                    <canvas id="historicalChart"></canvas>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md flex flex-col justify-center space-y-4">
+                    <p class="text-slate-600 leading-relaxed fade-text" data-i18n="hist_desc">
+                        Historically, Venezuela's GDP closely tracked its oil production and export values. The sharp decline post-2014 reflects falling production levels, dropping from over 3 million barrels per day to under 1 million.
+                    </p>
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm">
+                        <span class="font-bold text-slate-700 fade-text" data-i18n="sources_label">Sources:</span>
+                        <ul class="list-disc pl-5 mt-2 space-y-1 text-indigo-600">
+                            <li><a href="https://data.worldbank.org/" target="_blank" class="hover:underline">World Bank Open Data</a></li>
+                            <li><a href="https://www.opec.org/" target="_blank" class="hover:underline">OPEC Annual Statistical Bulletin</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4) International Comparison Section -->
+        <section id="comparisons">
+            <div class="mb-8 border-b pb-4">
+                <h2 class="text-3xl font-bold text-indigo-900 flex items-center gap-3 fade-text" data-i18n="comp_title">
+                    <i class="fa-solid fa-scale-balanced text-orange-500"></i> International Comparisons
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Tourism -->
+                <div class="bg-white p-6 rounded-xl shadow-md flex flex-col h-full">
+                    <h3 class="text-lg font-bold text-center mb-4 fade-text" data-i18n="comp_tourism">Tourism Potential</h3>
+                    <div class="flex-grow"><canvas id="tourismChart"></canvas></div>
+                    <p class="text-sm text-slate-600 mt-4 fade-text" data-i18n="comp_tour_desc">Comparing Spain's massive tourism revenue to Venezuela's largely untapped Caribbean coast and Amazonian regions.</p>
+                </div>
+                <!-- Oil -->
+                <div class="bg-white p-6 rounded-xl shadow-md flex flex-col h-full">
+                    <h3 class="text-lg font-bold text-center mb-4 fade-text" data-i18n="comp_oil">Oil Management</h3>
+                    <div class="flex-grow"><canvas id="oilCompChart"></canvas></div>
+                    <p class="text-sm text-slate-600 mt-4 fade-text" data-i18n="comp_oil_desc">Norway's model of sovereign wealth vs. Venezuela's historical reliance on immediate oil revenues.</p>
+                </div>
+                <!-- Mining -->
+                <div class="bg-white p-6 rounded-xl shadow-md flex flex-col h-full">
+                    <h3 class="text-lg font-bold text-center mb-4 fade-text" data-i18n="comp_mining">Mining Sector</h3>
+                    <div class="flex-grow"><canvas id="miningChart"></canvas></div>
+                    <p class="text-sm text-slate-600 mt-4 fade-text" data-i18n="comp_min_desc">Chile's regulated, high-yield copper mining compared to Venezuela's informal mining challenges.</p>
+                </div>
+            </div>
+            <div class="mt-4 text-sm text-right">
+                <a href="https://wttc.org/" target="_blank" class="text-indigo-600 hover:underline" data-i18n="source_wttc">Source: WTTC & World Bank</a>
+            </div>
+        </section>
+
+        <!-- 5) Investment Scenario Simulator -->
+        <section id="simulator" class="bg-indigo-50 p-8 rounded-2xl shadow-inner border border-indigo-100">
+            <div class="mb-8 text-center">
+                <h2 class="text-3xl font-bold text-indigo-900 flex items-center justify-center gap-3 fade-text" data-i18n="sim_title">
+                    <i class="fa-solid fa-sliders text-indigo-600"></i> Investment Scenario Simulator
+                </h2>
+                <p class="text-slate-600 mt-2 fade-text" data-i18n="sim_subtitle">Select a policy model to project potential economic impacts over a 10-year period.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Controls -->
+                <div class="lg:col-span-5 flex flex-col gap-4">
+                    <button onclick="runScenario('tourism')" class="sim-btn group relative w-full flex items-center p-4 bg-white border-2 border-indigo-200 rounded-xl hover:border-orange-400 hover:shadow-md transition-all text-left focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <div class="bg-orange-100 p-3 rounded-full text-orange-600 mr-4 group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-plane"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 fade-text" data-i18n="sim_btn_tour">Tourism Model (Spain)</h4>
+                            <p class="text-xs text-slate-500 fade-text" data-i18n="sim_btn_tour_sub">Infrastructure & security investment</p>
+                        </div>
+                    </button>
+
+                    <button onclick="runScenario('oil')" class="sim-btn group relative w-full flex items-center p-4 bg-white border-2 border-indigo-200 rounded-xl hover:border-blue-400 hover:shadow-md transition-all text-left focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <div class="bg-blue-100 p-3 rounded-full text-blue-600 mr-4 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-oil-well"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 fade-text" data-i18n="sim_btn_oil">Oil Model (Norway)</h4>
+                            <p class="text-xs text-slate-500 fade-text" data-i18n="sim_btn_oil_sub">Privatization & wealth fund</p>
+                        </div>
+                    </button>
+
+                    <button onclick="runScenario('mining')" class="sim-btn group relative w-full flex items-center p-4 bg-white border-2 border-indigo-200 rounded-xl hover:border-emerald-400 hover:shadow-md transition-all text-left focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <div class="bg-emerald-100 p-3 rounded-full text-emerald-600 mr-4 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-mountain"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 fade-text" data-i18n="sim_btn_min">Mining Model (Chile)</h4>
+                            <p class="text-xs text-slate-500 fade-text" data-i18n="sim_btn_min_sub">Regulated foreign investment</p>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Results -->
+                <div class="lg:col-span-7 bg-white p-8 rounded-xl shadow-lg border border-slate-100 flex flex-col justify-center">
+                    <h3 id="simResultTitle" class="text-2xl font-bold text-indigo-900 mb-6 text-center" data-i18n="sim_res_default">Select a scenario to view projections</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <p class="text-sm text-slate-500 font-semibold uppercase tracking-wide fade-text" data-i18n="sim_metric_gdp">GDP Growth</p>
+                            <p id="simGDP" class="text-3xl font-extrabold text-emerald-600 mt-2">--</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <p class="text-sm text-slate-500 font-semibold uppercase tracking-wide fade-text" data-i18n="sim_metric_jobs">Jobs Created</p>
+                            <p id="simJobs" class="text-3xl font-extrabold text-blue-600 mt-2">--</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <p class="text-sm text-slate-500 font-semibold uppercase tracking-wide fade-text" data-i18n="sim_metric_exp">Export Boost</p>
+                            <p id="simExp" class="text-3xl font-extrabold text-orange-600 mt-2">--</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-r-lg">
+                        <p id="simExplanation" class="text-slate-700 italic text-sm fade-text" data-i18n="sim_desc_default">Projections are speculative based on historical recovery models of peer nations adjusting for Venezuela's demographic and geographic scale.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7) Interactive Map Section -->
+        <section id="map-section">
+            <div class="mb-8 border-b pb-4">
+                <h2 class="text-3xl font-bold text-indigo-900 flex items-center gap-3 fade-text" data-i18n="map_title">
+                    <i class="fa-solid fa-map-location-dot text-red-500"></i> Resource Regions Map
+                </h2>
+                <p class="text-slate-600 mt-2 fade-text" data-i18n="map_subtitle">Explore the geographic distribution of key economic zones.</p>
+            </div>
+            
+            <div class="bg-white p-2 rounded-xl shadow-md border border-slate-200">
+                <div id="map" class="rounded-lg"></div>
+            </div>
+        </section>
+
+        <!-- 6) Policy Insight Section -->
+        <section id="insights" class="mb-12">
+            <div class="bg-slate-900 text-white p-8 rounded-2xl shadow-xl">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3 fade-text" data-i18n="pol_title">
+                    <i class="fa-solid fa-lightbulb text-yellow-400"></i> Key Insights & Recommendations
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-lg font-semibold text-indigo-300 mb-2 fade-text" data-i18n="pol_find_title">Key Findings</h4>
+                        <ul class="list-disc pl-5 space-y-2 text-slate-300 fade-text" data-i18n="pol_find_list">
+                            <li>Venezuela possesses unparalleled raw resource wealth, heavily skewed towards hydrocarbons.</li>
+                            <li>Historical data shows extreme vulnerability to single-commodity price shocks (Dutch Disease).</li>
+                            <li>Comparisons with Chile and Norway indicate that strong institutional frameworks are more critical than the resources themselves.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-emerald-300 mb-2 fade-text" data-i18n="pol_rec_title">Investor Recommendations</h4>
+                        <ul class="list-disc pl-5 space-y-2 text-slate-300 fade-text" data-i18n="pol_rec_list">
+                            <li>Prioritize public-private partnerships (PPPs) with strict international arbitration clauses.</li>
+                            <li>Diversify portfolio focus towards renewable energy potential (solar/hydro) and eco-tourism.</li>
+                            <li>Factor in significant initial CapEx for infrastructure rehabilitation (power grids, ports).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-8 text-center text-sm">
+        <p class="fade-text" data-i18n="footer_text">© 2026 Flor Peña. Venezuela Economic Dashboard. Created for analytical and demonstration purposes.</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- 1. DATA & STATE MANAGEMENT ---
+        
+        // Determine initial language based on browser, default to 'es'
+        let currentLang = (navigator.language || navigator.userLanguage).startsWith('en') ? 'en' : 'es';
+        
+        // Translation Dictionary
+        const translations = {
+            'es': {
+                'nav_title': 'EcoDash Venezuela',
+                'hero_title': 'Potencial Económico y Escenarios de Inversión en Venezuela',
+                'hero_subtitle': 'Explorando recursos naturales, tendencias históricas y oportunidades futuras.',
+                'hero_desc': 'Este panel explora los vastos recursos naturales de Venezuela, datos históricos de producción, comparaciones internacionales y posibles escenarios de recuperación económica mediante inversión estratégica.',
+                'res_title': 'Recursos Naturales',
+                'res_subtitle': 'Reservas Estimadas',
+                'res_desc': 'Venezuela posee las mayores reservas probadas de petróleo del mundo (~303 mil millones de barriles). La producción actual es mucho menor por falta de inversión e infraestructura. También posee inmensas reservas de oro, gas y hierro.',
+                'sources_label': 'Fuentes:',
+                'hist_title': 'Producción Histórica y PIB',
+                'hist_desc': 'Históricamente, el PIB de Venezuela siguió de cerca su producción y valor de exportación de petróleo. La fuerte caída posterior a 2014 refleja la caída de los niveles de producción, pasando de más de 3 millones de barriles diarios a menos de 1 millón.',
+                'comp_title': 'Comparaciones Internacionales',
+                'comp_tourism': 'Potencial Turístico (% PIB)',
+                'comp_tour_desc': 'Comparando los masivos ingresos turísticos de España con las regiones del Caribe y Amazonía venezolana, en gran parte sin explotar.',
+                'comp_oil': 'Gestión Petrolera (Fondo Soberano)',
+                'comp_oil_desc': 'El modelo de riqueza soberana de Noruega versus la dependencia histórica de Venezuela de los ingresos petroleros inmediatos.',
+                'comp_mining': 'Sector Minero (Exportaciones)',
+                'comp_min_desc': 'La minería de cobre de alto rendimiento y regulada de Chile en comparación con los desafíos de la minería informal en Venezuela.',
+                'source_wttc': 'Fuente: WTTC y Banco Mundial',
+                'sim_title': 'Simulador de Escenarios de Inversión',
+                'sim_subtitle': 'Seleccione un modelo político para proyectar impactos económicos potenciales a 10 años.',
+                'sim_btn_tour': 'Modelo Turístico (España)',
+                'sim_btn_tour_sub': 'Inversión en infraestructura y seguridad',
+                'sim_btn_oil': 'Modelo Petrolero (Noruega)',
+                'sim_btn_oil_sub': 'Privatización y fondo de riqueza',
+                'sim_btn_min': 'Modelo Minero (Chile)',
+                'sim_btn_min_sub': 'Inversión extranjera regulada',
+                'sim_res_default': 'Seleccione un escenario para ver proyecciones',
+                'sim_metric_gdp': 'Crecimiento PIB',
+                'sim_metric_jobs': 'Empleos Creados',
+                'sim_metric_exp': 'Impulso Exportador',
+                'sim_desc_default': 'Las proyecciones son especulativas, basadas en modelos históricos de recuperación de naciones pares, ajustando por la escala demográfica y geográfica de Venezuela.',
+                'sim_res_tour_title': 'Impacto del Modelo Turístico',
+                'sim_res_tour_desc': 'Desarrollar infraestructura hotelera y aeropuertos en la costa caribeña (Los Roques, Margarita) podría generar empleos masivos en servicios, diversificando lejos del petróleo.',
+                'sim_res_oil_title': 'Impacto del Modelo Petrolero',
+                'sim_res_oil_desc': 'La apertura al capital privado combinada con una ley estricta de fondo soberano estabilizaría la moneda y generaría ingresos masivos para reconstrucción a largo plazo.',
+                'sim_res_min_title': 'Impacto del Modelo Minero',
+                'sim_res_min_desc': 'Formalizar el Arco Minero con corporaciones internacionales y estándares ambientales podría eliminar mafias y generar altos ingresos fiscales.',
+                'map_title': 'Mapa de Regiones de Recursos',
+                'map_subtitle': 'Explore la distribución geográfica de las zonas económicas clave.',
+                'pol_title': 'Hallazgos Clave y Recomendaciones',
+                'pol_find_title': 'Hallazgos Clave',
+                'pol_find_list': '<li>Venezuela posee una riqueza de materias primas sin paralelo, fuertemente sesgada hacia los hidrocarburos.</li><li>Los datos históricos muestran extrema vulnerabilidad a choques de precios de un solo producto (Enfermedad Holandesa).</li><li>Comparaciones con Chile y Noruega indican que los marcos institucionales sólidos son más críticos que los recursos en sí.</li>',
+                'pol_rec_title': 'Recomendaciones para Inversores',
+                'pol_rec_list': '<li>Priorizar Asociaciones Público-Privadas (APP) con estrictas cláusulas de arbitraje internacional.</li><li>Diversificar el enfoque de cartera hacia el potencial de energías renovables (solar/hidro) y el ecoturismo.</li><li>Contemplar un Capex inicial significativo para la rehabilitación de infraestructura (redes eléctricas, puertos).</li>',
+                'footer_text': '© 2026 Panel Económico de Venezuela. Creado para fines analíticos y de demostración.',
+                // Chart Labels
+                'chart_res_oil': 'Petróleo', 'chart_res_gas': 'Gas Natural', 'chart_res_gold': 'Oro', 'chart_res_iron': 'Hierro',
+                'chart_hist_oil': 'Producción Petróleo', 'chart_hist_gdp': 'Crecimiento PIB',
+                'chart_comp_ven': 'Venezuela', 'chart_comp_esp': 'España', 'chart_comp_nor': 'Noruega', 'chart_comp_chi': 'Chile',
+                // Map Tooltips
+                'map_orinoco_title': 'Faja Petrolífera del Orinoco',
+                'map_orinoco_desc': 'Reservas de crudo pesado más grandes del mundo.',
+                'map_arco_title': 'Arco Minero del Orinoco',
+                'map_arco_desc': 'Rico en oro, diamantes y coltán.',
+                'map_turismo_title': 'Zona Turística (Margarita/Roques)',
+                'map_turismo_desc': 'Alto potencial de inversión hotelera.'
+            },
+            'en': {
+                'nav_title': 'Venezuela EcoDash',
+                'hero_title': 'Venezuela Economic Potential & Investment Scenarios',
+                'hero_subtitle': 'Exploring natural resources, historical trends, and future opportunities.',
+                'hero_desc': 'This dashboard explores Venezuela’s vast natural resources, historical production data, international comparisons, and potential economic recovery scenarios through strategic investment.',
+                'res_title': 'Natural Resources',
+                'res_subtitle': 'Estimated Reserves',
+                'res_desc': 'Venezuela has the world\'s largest proven oil reserves (~303 billion barrels). Currently, production is much lower due to lack of investment and infrastructure. It also possesses immense reserves of Gold, Gas, and Iron.',
+                'sources_label': 'Sources:',
+                'hist_title': 'Historical Production & GDP',
+                'hist_desc': 'Historically, Venezuela\'s GDP closely tracked its oil production and export values. The sharp decline post-2014 reflects falling production levels, dropping from over 3 million barrels per day to under 1 million.',
+                'comp_title': 'International Comparisons',
+                'comp_tourism': 'Tourism Potential (% GDP)',
+                'comp_tour_desc': 'Comparing Spain\'s massive tourism revenue to Venezuela\'s largely untapped Caribbean coast and Amazonian regions.',
+                'comp_oil': 'Oil Management (Sovereign Fund)',
+                'comp_oil_desc': 'Norway\'s model of sovereign wealth vs. Venezuela\'s historical reliance on immediate oil revenues.',
+                'comp_mining': 'Mining Sector (Exports)',
+                'comp_min_desc': 'Chile\'s regulated, high-yield copper mining compared to Venezuela\'s informal mining challenges.',
+                'source_wttc': 'Source: WTTC & World Bank',
+                'sim_title': 'Investment Scenario Simulator',
+                'sim_subtitle': 'Select a policy model to project potential economic impacts over a 10-year period.',
+                'sim_btn_tour': 'Tourism Model (Spain)',
+                'sim_btn_tour_sub': 'Infrastructure & security investment',
+                'sim_btn_oil': 'Oil Model (Norway)',
+                'sim_btn_oil_sub': 'Privatization & wealth fund',
+                'sim_btn_min': 'Mining Model (Chile)',
+                'sim_btn_min_sub': 'Regulated foreign investment',
+                'sim_res_default': 'Select a scenario to view projections',
+                'sim_metric_gdp': 'GDP Growth',
+                'sim_metric_jobs': 'Jobs Created',
+                'sim_metric_exp': 'Export Boost',
+                'sim_desc_default': 'Projections are speculative based on historical recovery models of peer nations adjusting for Venezuela\'s demographic and geographic scale.',
+                'sim_res_tour_title': 'Tourism Model Impact',
+                'sim_res_tour_desc': 'Developing hotel infrastructure and airports on the Caribbean coast (Los Roques, Margarita) could generate massive service jobs, diversifying away from oil.',
+                'sim_res_oil_title': 'Oil Model Impact',
+                'sim_res_oil_desc': 'Opening to private capital combined with a strict sovereign wealth fund law would stabilize currency and generate massive long-term reconstruction revenues.',
+                'sim_res_min_title': 'Mining Model Impact',
+                'sim_res_min_desc': 'Formalizing the Mining Arc with international corporations and environmental standards could eliminate mafias and generate high tax revenues.',
+                'map_title': 'Resource Regions Map',
+                'map_subtitle': 'Explore the geographic distribution of key economic zones.',
+                'pol_title': 'Key Insights & Recommendations',
+                'pol_find_title': 'Key Findings',
+                'pol_find_list': '<li>Venezuela possesses unparalleled raw resource wealth, heavily skewed towards hydrocarbons.</li><li>Historical data shows extreme vulnerability to single-commodity price shocks (Dutch Disease).</li><li>Comparisons with Chile and Norway indicate that strong institutional frameworks are more critical than the resources themselves.</li>',
+                'pol_rec_title': 'Investor Recommendations',
+                'pol_rec_list': '<li>Prioritize public-private partnerships (PPPs) with strict international arbitration clauses.</li><li>Diversify portfolio focus towards renewable energy potential (solar/hydro) and eco-tourism.</li><li>Factor in significant initial CapEx for infrastructure rehabilitation (power grids, ports).</li>',
+                'footer_text': '© 2026 Venezuela Economic Dashboard. Created for analytical and demonstration purposes.',
+                // Chart Labels
+                'chart_res_oil': 'Oil', 'chart_res_gas': 'Natural Gas', 'chart_res_gold': 'Gold', 'chart_res_iron': 'Iron',
+                'chart_hist_oil': 'Oil Production', 'chart_hist_gdp': 'GDP Growth',
+                'chart_comp_ven': 'Venezuela', 'chart_comp_esp': 'Spain', 'chart_comp_nor': 'Norway', 'chart_comp_chi': 'Chile',
+                // Map Tooltips
+                'map_orinoco_title': 'Orinoco Oil Belt',
+                'map_orinoco_desc': 'World\'s largest heavy crude oil reserves.',
+                'map_arco_title': 'Orinoco Mining Arc',
+                'map_arco_desc': 'Rich in gold, diamonds, and coltan.',
+                'map_turismo_title': 'Tourism Zone (Margarita/Roques)',
+                'map_turismo_desc': 'High potential for hotel investment.'
+            }
+        };
+
+        // --- 2. CHART.JS INITIALIZATION & DATA ---
+        
+        // Colors
+        const colors = {
+            oil: 'rgba(59, 130, 246, 0.8)',   // Blue
+            gas: 'rgba(16, 185, 129, 0.8)',   // Emerald
+            gold: 'rgba(245, 158, 11, 0.8)',  // Amber
+            iron: 'rgba(100, 116, 139, 0.8)', // Slate
+            venezuela: 'rgba(239, 68, 68, 0.8)', // Red
+            compare: 'rgba(99, 102, 241, 0.8)'   // Indigo
+        };
+
+        let charts = {}; // Store chart instances to update them
+
+        function initCharts() {
+            // Resources Doughnut Chart
+            const ctxRes = document.getElementById('resourcesChart').getContext('2d');
+            charts.resources = new Chart(ctxRes, {
+                type: 'doughnut',
+                data: {
+                    labels: [t('chart_res_oil'), t('chart_res_gas'), t('chart_res_gold'), t('chart_res_iron')],
+                    datasets: [{
+                        data: [70, 15, 10, 5], // Relative representative weights
+                        backgroundColor: [colors.oil, colors.gas, colors.gold, colors.iron],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { callbacks: { label: function(c) { return ' ' + c.label + ': ' + c.raw + '%'; } } }
+                    }
+                }
+            });
+
+            // Historical Line Chart
+            const ctxHist = document.getElementById('historicalChart').getContext('2d');
+            charts.historical = new Chart(ctxHist, {
+                type: 'line',
+                data: {
+                    labels: ['1998', '2004', '2008', '2014', '2018', '2022', '2024'],
+                    datasets: [
+                        {
+                            label: t('chart_hist_oil') + ' (M bpd)',
+                            data: [3.3, 2.6, 3.2, 2.7, 1.3, 0.7, 0.8],
+                            borderColor: colors.oil,
+                            tension: 0.3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: t('chart_hist_gdp') + ' (%)',
+                            data: [0.3, 18.3, 5.3, -3.9, -19.6, 8.0, 4.0],
+                            borderColor: colors.gold,
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: { type: 'linear', display: true, position: 'left', title: {display: true, text: 'M bpd'} },
+                        y1: { type: 'linear', display: true, position: 'right', grid: {drawOnChartArea: false}, title: {display: true, text: '%'} }
+                    }
+                }
+            });
+
+            // Tourism Comparison Chart
+            const ctxTour = document.getElementById('tourismChart').getContext('2d');
+            charts.tourism = new Chart(ctxTour, {
+                type: 'bar',
+                data: {
+                    labels: [t('chart_comp_ven'), t('chart_comp_esp')],
+                    datasets: [{ label: '% GDP', data: [1.2, 11.6], backgroundColor: [colors.venezuela, colors.compare] }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+
+            // Oil Comparison Chart
+            const ctxOil = document.getElementById('oilCompChart').getContext('2d');
+            charts.oil = new Chart(ctxOil, {
+                type: 'bar',
+                data: {
+                    labels: [t('chart_comp_ven'), t('chart_comp_nor')],
+                    datasets: [{ label: 'Fund Size ($B)', data: [0.8, 1400], backgroundColor: [colors.venezuela, colors.compare] }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+
+            // Mining Comparison Chart
+            const ctxMin = document.getElementById('miningChart').getContext('2d');
+            charts.mining = new Chart(ctxMin, {
+                type: 'bar',
+                data: {
+                    labels: [t('chart_comp_ven'), t('chart_comp_chi')],
+                    datasets: [{ label: 'Exports ($B)', data: [2.5, 53.0], backgroundColor: [colors.venezuela, colors.compare] }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+        }
+
+        // --- 3. LEAFLET MAP INITIALIZATION ---
+        
+        let map;
+        let mapLayers = {};
+
+        function initMap() {
+            // Center on Venezuela
+            map = L.map('map').setView([7.5, -65.5], 5);
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Orinoco Belt (Faja Petrolífera)
+            mapLayers.orinoco = L.circle([8.6, -63.5], {
+                color: 'blue',
+                fillColor: '#3b82f6',
+                fillOpacity: 0.5,
+                radius: 120000
+            }).addTo(map);
+
+            // Arco Minero
+            mapLayers.arco = L.circle([6.5, -62.0], {
+                color: 'orange',
+                fillColor: '#f59e0b',
+                fillOpacity: 0.5,
+                radius: 180000
+            }).addTo(map);
+
+            // Tourism (Margarita/Los Roques area)
+            mapLayers.turismo = L.circle([11.5, -65.0], {
+                color: 'green',
+                fillColor: '#10b981',
+                fillOpacity: 0.5,
+                radius: 80000
+            }).addTo(map);
+
+            updateMapPopups();
+        }
+
+        function updateMapPopups() {
+            if(!map) return;
+            mapLayers.orinoco.bindPopup(`<b>${t('map_orinoco_title')}</b><br>${t('map_orinoco_desc')}`);
+            mapLayers.arco.bindPopup(`<b>${t('map_arco_title')}</b><br>${t('map_arco_desc')}`);
+            mapLayers.turismo.bindPopup(`<b>${t('map_turismo_title')}</b><br>${t('map_turismo_desc')}`);
+        }
+
+
+        // --- 4. SIMULATOR LOGIC ---
+        
+        const scenarios = {
+            'tourism': { gdp: '+12%', jobs: '+1.5M', exp: '+$10B', titleKey: 'sim_res_tour_title', descKey: 'sim_res_tour_desc' },
+            'oil': { gdp: '+18%', jobs: '+500K', exp: '+$40B', titleKey: 'sim_res_oil_title', descKey: 'sim_res_oil_desc' },
+            'mining': { gdp: '+8%', jobs: '+300K', exp: '+$15B', titleKey: 'sim_res_min_title', descKey: 'sim_res_min_desc' }
+        };
+
+        function runScenario(type) {
+            const data = scenarios[type];
+            
+            // Highlight active button
+            document.querySelectorAll('.sim-btn').forEach(btn => btn.classList.remove('ring-4', 'ring-opacity-50'));
+            event.currentTarget.classList.add('ring-4', 'ring-opacity-50');
+            
+            // Update UI with animation
+            const els = ['simGDP', 'simJobs', 'simExp'];
+            els.forEach(id => {
+                const el = document.getElementById(id);
+                el.style.opacity = 0;
+            });
+
+            setTimeout(() => {
+                document.getElementById('simResultTitle').innerText = t(data.titleKey);
+                document.getElementById('simGDP').innerText = data.gdp;
+                document.getElementById('simJobs').innerText = data.jobs;
+                document.getElementById('simExp').innerText = data.exp;
+                document.getElementById('simExplanation').innerText = t(data.descKey);
+                
+                els.forEach(id => {
+                    const el = document.getElementById(id);
+                    el.style.transition = 'opacity 0.5s';
+                    el.style.opacity = 1;
+                });
+            }, 200);
+        }
+
+        // --- 5. TRANSLATION LOGIC ---
+        
+        // Helper to get translation string
+        function t(key) {
+            return translations[currentLang][key] || key;
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            updateUI();
+        }
+
+        function updateUI() {
+            // Update button label
+            document.getElementById('currentLangLabel').innerText = currentLang === 'es' ? 'ES / EN' : 'EN / ES';
+
+            // Update DOM text
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                // Fade effect
+                el.style.opacity = 0;
+                setTimeout(() => {
+                    if (el.tagName === 'UL') {
+                        el.innerHTML = t(key); // For HTML content like lists
+                    } else {
+                        el.innerHTML = t(key); // Use innerHTML to allow icons to persist if part of string, or just update text
+                    }
+                    el.style.opacity = 1;
+                }, 150);
+            });
+
+            // Restore icons dynamically
+            setTimeout(() => {
+                document.querySelector('[data-i18n="res_title"]').innerHTML = `<i class="fa-solid fa-gem text-emerald-600 mr-2"></i> ${t('res_title')}`;
+                document.querySelector('[data-i18n="hist_title"]').innerHTML = `<i class="fa-solid fa-clock-rotate-left text-blue-600 mr-2"></i> ${t('hist_title')}`;
+                document.querySelector('[data-i18n="comp_title"]').innerHTML = `<i class="fa-solid fa-scale-balanced text-orange-500 mr-2"></i> ${t('comp_title')}`;
+                document.querySelector('[data-i18n="sim_title"]').innerHTML = `<i class="fa-solid fa-sliders text-indigo-600 mr-2"></i> ${t('sim_title')}`;
+                document.querySelector('[data-i18n="map_title"]').innerHTML = `<i class="fa-solid fa-map-location-dot text-red-500 mr-2"></i> ${t('map_title')}`;
+                document.querySelector('[data-i18n="pol_title"]').innerHTML = `<i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i> ${t('pol_title')}`;
+            }, 160);
+
+            // Update Charts
+            if (charts.resources) {
+                charts.resources.data.labels = [t('chart_res_oil'), t('chart_res_gas'), t('chart_res_gold'), t('chart_res_iron')];
+                charts.resources.update();
+            }
+            if (charts.historical) {
+                charts.historical.data.datasets[0].label = t('chart_hist_oil') + ' (M bpd)';
+                charts.historical.data.datasets[1].label = t('chart_hist_gdp') + ' (%)';
+                charts.historical.update();
+            }
+            if (charts.tourism) {
+                charts.tourism.data.labels = [t('chart_comp_ven'), t('chart_comp_esp')];
+                charts.tourism.update();
+            }
+            if (charts.oil) {
+                charts.oil.data.labels = [t('chart_comp_ven'), t('chart_comp_nor')];
+                charts.oil.update();
+            }
+            if (charts.mining) {
+                charts.mining.data.labels = [t('chart_comp_ven'), t('chart_comp_chi')];
+                charts.mining.update();
+            }
+
+            // Update Map Popups
+            updateMapPopups();
+
+            // Reset Simulator UI
+            document.getElementById('simGDP').innerText = '--';
+            document.getElementById('simJobs').innerText = '--';
+            document.getElementById('simExp').innerText = '--';
+            document.getElementById('simResultTitle').innerText = t('sim_res_default');
+            document.getElementById('simExplanation').innerText = t('sim_desc_default');
+            document.querySelectorAll('.sim-btn').forEach(btn => btn.classList.remove('ring-4', 'ring-opacity-50'));
+        }
+
+        // --- 6. INITIALIZATION ---
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Bind language toggle button
+            document.getElementById('langToggle').addEventListener('click', toggleLanguage);
+            
+            // Initial render
+            initCharts();
+            initMap();
+            updateUI(); // Set correct initial language
+        });
+
+    </script>
+</body>
+</html>
