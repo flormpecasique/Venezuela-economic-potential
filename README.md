@@ -1,6 +1,6 @@
 # Venezuela Economic Potential & Investment Scenarios Dashboard 🇻🇪
 
-![Preview](assets/images/preview.png)
+![Preview](/preview.png)
 
 ---
 
