@@ -64,7 +64,7 @@ a:hover{text-decoration-thickness:2px}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .icon-btn{background:none;border:1px solid var(--line);color:var(--ink);border-radius:999px;width:38px;height:38px;display:grid;place-items:center;cursor:pointer}
 .icon-btn svg{width:18px;height:18px}
-.chapters{max-width:1240px;margin:0 auto;padding:0 1.25rem .5rem;display:flex;gap:.4rem;overflow-x:auto;scrollbar-width:none}
+.chapters{position:relative;max-width:1240px;margin:0 auto;padding:0 1.25rem .5rem;display:flex;gap:.4rem;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
 .chapters::-webkit-scrollbar{display:none}
 .chapters a{flex:0 0 auto;font:500 .8125rem var(--sans);color:var(--muted);text-decoration:none;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
 .chapters a[aria-current="true"]{color:var(--paper);background:var(--river);border-color:var(--river)}
@@ -827,10 +827,21 @@ function buildNav(){
   $('[data-nav]').innerHTML = html.join(''); $('[data-rail]').innerHTML = html.map(h=>`<li>${h}</li>`).join('');
   $('[data-nav]').setAttribute('aria-label',UI[lang].nav);
 }
-let navIO;
+let navIO, currentId = null;
+function setCurrent(id){
+  if(id===currentId) return; currentId = id;
+  $$('[data-nav] a,[data-rail] a').forEach(a=>a.setAttribute('aria-current', id!==null && a.getAttribute('href')==='#'+id));
+  // Mueve SOLO la barra de capítulos en horizontal; desplazar la página
+  // desde aquí interrumpe el scroll táctil en móviles.
+  const nav = $('[data-nav]'), a = id && nav.querySelector(`a[href="#${id}"]`);
+  if(a && nav.scrollWidth > nav.clientWidth){
+    const left = a.offsetLeft - (nav.clientWidth - a.offsetWidth)/2;
+    nav.scrollTo({left: Math.max(0,left), behavior: reduce ? 'auto' : 'smooth'});
+  }
+}
 function watchNav(){
-  navIO?.disconnect();
-  navIO = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ $$('[data-nav] a,[data-rail] a').forEach(a=>{ const on=e.target.id!=='top' && a.getAttribute('href')==='#'+e.target.id; a.setAttribute('aria-current',on); if(on && a.closest('[data-nav]')) a.scrollIntoView({block:'nearest',inline:'center',behavior:reduce?'auto':'smooth'}); }); } }),{rootMargin:'-30% 0px -60% 0px'});
+  navIO?.disconnect(); currentId = null;
+  navIO = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) setCurrent(e.target.id==='top' ? null : e.target.id); }),{rootMargin:'-30% 0px -60% 0px'});
   $$('section.ch').forEach(s=>navIO.observe(s));
   navIO.observe($('#top'));
 }
