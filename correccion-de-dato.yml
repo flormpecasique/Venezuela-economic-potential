@@ -1,0 +1,56 @@
+name: Corrección de dato / Data correction
+description: Señala una cifra incorrecta o un dato más reciente, con su fuente. / Report a wrong figure or a newer one, with its source.
+title: "[Dato] "
+labels: ["datos"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por ayudar a mantener la página fiable. Solo podemos publicar cifras con una fuente verificable (organismo oficial, organismo internacional o un medio que cite a uno de ellos).
+        Thanks for helping keep the page reliable. We can only publish figures with a verifiable source (official body, international organisation, or media citing one).
+  - type: dropdown
+    id: seccion
+    attributes:
+      label: Sección / Section
+      options:
+        - 1. Reservas / Reserves
+        - 2. Producción / Production
+        - 3. Economía / Economy
+        - 4. Qué cambió en 2026 / What changed in 2026
+        - 5. Mapa / Map
+        - 6. Comparativas / Comparisons
+        - 7. Riesgos / Risks
+        - Otra / Other
+    validations:
+      required: true
+  - type: input
+    id: actual
+    attributes:
+      label: Dato que aparece ahora / Figure currently shown
+      placeholder: "Ej.: Producción ago 2026: 1,145 M b/d"
+    validations:
+      required: true
+  - type: input
+    id: propuesto
+    attributes:
+      label: Dato correcto o más reciente / Correct or newer figure
+      placeholder: "Ej.: Producción sep 2026: 1,160 M b/d"
+    validations:
+      required: true
+  - type: input
+    id: fuente
+    attributes:
+      label: Enlace a la fuente / Source link
+      placeholder: https://
+    validations:
+      required: true
+  - type: input
+    id: fecha
+    attributes:
+      label: Fecha de publicación de la fuente / Source publication date
+      placeholder: "Ej.: 2026-10-14"
+  - type: textarea
+    id: notas
+    attributes:
+      label: Comentarios / Notes
+      description: Contexto útil, por ejemplo si la fuente usa otra metodología. / Useful context, e.g. if the source uses a different method.
