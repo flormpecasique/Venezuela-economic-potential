@@ -16,16 +16,17 @@ Cada cifra enlaza a su fuente. Donde no existe un dato oficial comparable, la p�
 
 ### Contenido
 
-La página se organiza en ocho capítulos:
+La página se organiza en nueve capítulos:
 
 1. **Reservas.** Reservas probadas de crudo a finales de 2024, comparadas con Arabia Saudita, Irán, Canadá e Irak.
 2. **Producción.** Puntos de referencia de la OPEP desde 2002 y comparación con el dato de PDVSA. Incluye un zoom a 2025–2026 y proyecciones de analistas que se pueden activar.
 3. **Economía.** PIB en dólares de 1980 a 2027 (FMI) y por qué difiere del dato del Banco Mundial. También recoge las proyecciones del FMI para 2026 y cómo cambiaron en seis meses.
 4. **Qué cambió en 2026.** Cronología de la reforma de la Ley de Hidrocarburos, las licencias OFAC y el reglamento.
-5. **Mapa.** Estados que abarcan la Faja Petrolífera y el Arco Minero del Orinoco.
-6. **Comparativas.** Peso del turismo (España, México) y de la minería en las exportaciones (Perú, Chile).
-7. **Riesgos.** Inflación, deuda, sanciones, calidad del crudo, ambiente y disponibilidad de datos.
-8. **Fuentes y método.** Todas las fuentes enlazadas.
+5. **El acuerdo con EE.UU.** Qué se sabe y qué no del acuerdo petrolero de agosto de 2026: cifras anunciadas (atribuidas a quien las dice), qué parte de las reservas cubre, metas de producción, contradicciones y posiciones a favor y en contra.
+6. **Mapa.** Estados que abarcan la Faja Petrolífera y el Arco Minero del Orinoco.
+7. **Comparativas.** Peso del turismo (España, México) y de la minería en las exportaciones (Perú, Chile).
+8. **Riesgos.** Inflación, deuda, sanciones, calidad del crudo, ambiente, acuerdo sin texto público y disponibilidad de datos.
+9. **Fuentes y método.** Todas las fuentes enlazadas.
 
 ### Principios de los datos
 
@@ -35,6 +36,7 @@ La página se organiza en ocho capítulos:
   - *Dato oficial:* publicado por un organismo oficial o internacional.
   - *Estimación:* cálculo de terceros sobre un periodo cerrado.
   - *Proyección:* previsión sobre el futuro, que puede cambiar.
+  - *Anuncio:* cifra declarada por un gobierno sin documento publicado que la respalde.
 - **Transparencia.** Cada gráfico incluye su tabla de datos y descarga en CSV.
 
 ### Fuentes principales
@@ -45,7 +47,7 @@ La página se organiza en ocho capítulos:
 - INE (España), INEGI (México), Banco Central de Chile y SNMPE (Perú).
 - Gaceta Oficial de Venezuela y análisis jurídicos de la reforma de 2026.
 
-La lista completa está en el capítulo 8 de la web.
+La lista completa está en el capítulo 9 de la web.
 
 ### Tecnología
 
@@ -65,6 +67,7 @@ Datos que cambian con frecuencia:
 - Producción petrolera mensual de la OPEP.
 - Licencias OFAC.
 - Proyecciones del FMI (nuevo WEO en abril y octubre).
+- Acuerdo petrolero con EE.UU.: revisar el capítulo 5 cuando se publique el texto oficial.
 
 ### Ver en local
 
@@ -96,16 +99,17 @@ Every figure links to its source. Where no comparable official figure exists, th
 
 ### Contents
 
-The page is organised in eight chapters:
+The page is organised in nine chapters:
 
 1. **Reserves.** Proven crude reserves at the end of 2024, compared with Saudi Arabia, Iran, Canada and Iraq.
 2. **Production.** OPEC reference points since 2002 and comparison with PDVSA's own figure. Includes a 2025–2026 zoom and optional analyst projections.
 3. **Economy.** Dollar GDP from 1980 to 2027 (IMF) and why it differs from the World Bank figure. Also covers the IMF's 2026 projections and how they changed in six months.
 4. **What changed in 2026.** Timeline of the Hydrocarbons Law reform, OFAC licences and the implementing regulations.
-5. **Map.** States covered by the Orinoco Oil Belt and the Orinoco Mining Arc.
-6. **Comparisons.** Tourism's share of GDP (Spain, Mexico) and mining's share of exports (Peru, Chile).
-7. **Risks.** Inflation, debt, sanctions, crude quality, environment and data availability.
-8. **Sources and method.** All sources, linked.
+5. **The US agreement.** What is and is not known about the August 2026 oil agreement: announced figures (attributed to whoever made them), share of reserves covered, production targets, contradictions, and arguments for and against.
+6. **Map.** States covered by the Orinoco Oil Belt and the Orinoco Mining Arc.
+7. **Comparisons.** Tourism's share of GDP (Spain, Mexico) and mining's share of exports (Peru, Chile).
+8. **Risks.** Inflation, debt, sanctions, crude quality, environment, an agreement with no public text, and data availability.
+9. **Sources and method.** All sources, linked.
 
 ### Data principles
 
@@ -115,6 +119,7 @@ The page is organised in eight chapters:
   - *Official data:* published by an official or international body.
   - *Estimate:* third-party calculation for a closed period.
   - *Projection:* a forecast about the future, which may change.
+  - *Announcement:* a figure stated by a government with no published document to back it.
 - **Transparency.** Every chart includes its data table and a CSV download.
 
 ### Main sources
@@ -125,7 +130,7 @@ The page is organised in eight chapters:
 - INE (Spain), INEGI (Mexico), Central Bank of Chile and SNMPE (Peru).
 - Venezuela's Official Gazette and legal analyses of the 2026 reform.
 
-The full list is in chapter 8 of the site.
+The full list is in chapter 9 of the site.
 
 ### Technology
 
@@ -145,6 +150,7 @@ Frequently changing data:
 - OPEC monthly oil production.
 - OFAC licences.
 - IMF projections (new WEO every April and October).
+- US oil agreement: review chapter 5 once the official text is published.
 
 ### Run locally
 
