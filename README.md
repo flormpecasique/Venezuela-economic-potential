@@ -1,6 +1,6 @@
 # Venezuela en datos · Venezuela in Data 🇻🇪
 
-![Vista previa / Preview](preview-website.png)
+![Vista previa / Preview](preview.png)
 
 **Demo:** https://venezuela-economic-potential.vercel.app
 
